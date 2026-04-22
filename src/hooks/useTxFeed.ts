@@ -5,7 +5,7 @@ import { CONTRACT_ADDRESS, SECURE_VAULT_ABI } from "../lib/contract";
 
 const client = createPublicClient({
   chain: base,
-  transport: http("https://mainnet.base.org"),
+  transport: http(import.meta.env.VITE_BASE_RPC_URL || "https://mainnet.base.org"),
 });
 
 export function useTxFeed() {
@@ -13,13 +13,17 @@ export function useTxFeed() {
 
   useEffect(() => {
     async function load() {
-      const logs = await client.getLogs({
-        address: CONTRACT_ADDRESS,
-        abi: SECURE_VAULT_ABI,
-        fromBlock: "latest",
-      });
+      try {
+        const logs = await client.getLogs({
+          address: CONTRACT_ADDRESS,
+          abi: SECURE_VAULT_ABI,
+          fromBlock: "latest",
+        });
 
-      setEvents(logs.reverse());
+        setEvents(logs.reverse());
+      } catch (e) {
+        console.error("feed error:", e);
+      }
     }
 
     load();
