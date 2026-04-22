@@ -1,0 +1,31 @@
+specVersion: 0.0.4
+description: SecureVault Index
+schema:
+  file: ./schema.graphql
+
+dataSources:
+  - kind: ethereum
+    name: SecureVault
+    network: base
+    source:
+      address: "0xcc3ecd133d27e2c9f0d6ae1701d8f70364efdc34"
+      abi: SecureVault
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      entities:
+        - Deposit
+        - Refund
+        - StateChanged
+      abis:
+        - name: SecureVault
+          file: ./abis/SecureVault.json
+      eventHandlers:
+        - event: Deposited(indexed address,uint256)
+          handler: handleDeposited
+        - event: Refunded(indexed address,uint256)
+          handler: handleRefunded
+        - event: StateChanged(indexed uint8,indexed uint8)
+          handler: handleStateChanged
+      file: ./src/mapping.ts
